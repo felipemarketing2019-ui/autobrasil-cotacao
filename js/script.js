@@ -105,25 +105,49 @@ function getUTMs() {
 capturarUTMs();
 
 /* ---- GEOLOCALIZAÇÃO ----
-   1. /geo → lê cidade, estado, IP, lat/lon via Cloudflare
-   2. Nominatim → geocodificação reversa para obter o bairro */
-const geoPromise = fetch('/geo')
-  .then(r => r.json())
-  .then(async geo => {
-    if (geo.lat && geo.lon) {
-      try {
-        const rev = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${geo.lat}&lon=${geo.lon}&format=json`,
-          { headers: { 'Accept-Language': 'pt-BR' } }
-        );
-        const addr = (await rev.json()).address || {};
-        geo.bairro = addr.suburb || addr.neighbourhood || addr.quarter || addr.village || '';
-        geo.cep    = addr.postcode || geo.cep || '';
-      } catch {}
+   1. Pede GPS do navegador (permissão do usuário) — bairro exato
+   2. Fallback: lat/lon do Cloudflare via /geo — cidade apenas
+   3. Nominatim faz geocodificação reversa com o melhor par disponível */
+const geoPromise = (async () => {
+  const cf = await fetch('/geo').then(r => r.json()).catch(() => ({}));
+
+  let lat = cf.lat;
+  let lon = cf.lon;
+  let fonteGeo = 'IP';
+
+  if (navigator.geolocation) {
+    try {
+      const pos = await new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          timeout: 8000,
+          maximumAge: 60000,
+        })
+      );
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+      fonteGeo = 'GPS';
+    } catch {
+      // Negado ou indisponível — usa coords do Cloudflare
     }
-    return geo;
-  })
-  .catch(() => ({}));
+  }
+
+  let bairro = '';
+  let cep = cf.cep || '';
+
+  if (lat && lon) {
+    try {
+      const rev = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
+        { headers: { 'Accept-Language': 'pt-BR' } }
+      );
+      const addr = (await rev.json()).address || {};
+      bairro = addr.suburb || addr.neighbourhood || addr.quarter || addr.village || '';
+      cep    = addr.postcode || cep;
+    } catch {}
+  }
+
+  return { ...cf, bairro, cep, fonteGeo };
+})();
 
 /* ---- ESTADO DA SESSÃO ---- */
 const state = {
@@ -533,7 +557,8 @@ document.addEventListener('DOMContentLoaded', () => {
           ...(geoData.cidade ? { 'Cidade': `${geoData.cidade}, ${geoData.estado} — ${geoData.pais}` } : {}),
           ...(geoData.cep    ? { 'CEP': geoData.cep } : {}),
           ...(geoData.fuso   ? { 'Fuso horário': geoData.fuso } : {}),
-          ...(geoData.ip     ? { 'IP': geoData.ip } : {}),
+          ...(geoData.ip       ? { 'IP': geoData.ip } : {}),
+          ...(geoData.fonteGeo ? { 'Precisão geo': geoData.fonteGeo } : {}),
           ...utmPayload,
         }),
       });
