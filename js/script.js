@@ -105,10 +105,24 @@ function getUTMs() {
 capturarUTMs();
 
 /* ---- GEOLOCALIZAÇÃO ----
-   Lida pelo Cloudflare no endpoint /geo (functions/geo.js).
-   Inicia ao carregar a página e é aguardada no envio do formulário. */
+   1. /geo → lê cidade, estado, IP, lat/lon via Cloudflare
+   2. Nominatim → geocodificação reversa para obter o bairro */
 const geoPromise = fetch('/geo')
   .then(r => r.json())
+  .then(async geo => {
+    if (geo.lat && geo.lon) {
+      try {
+        const rev = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${geo.lat}&lon=${geo.lon}&format=json`,
+          { headers: { 'Accept-Language': 'pt-BR' } }
+        );
+        const addr = (await rev.json()).address || {};
+        geo.bairro = addr.suburb || addr.neighbourhood || addr.quarter || addr.village || '';
+        geo.cep    = addr.postcode || geo.cep || '';
+      } catch {}
+    }
+    return geo;
+  })
   .catch(() => ({}));
 
 /* ---- ESTADO DA SESSÃO ---- */
@@ -515,7 +529,9 @@ document.addEventListener('DOMContentLoaded', () => {
           Cidade: state.cidade || '—',
           'Valor do veículo': formatCurrencyBR(state.valor),
           'Data e hora do envio': dataHoraEnvio(),
-          ...(geoData.cidade ? { 'Localização': `${geoData.cidade}, ${geoData.estado} — ${geoData.pais}` } : {}),
+          ...(geoData.bairro ? { 'Bairro': geoData.bairro } : {}),
+          ...(geoData.cidade ? { 'Cidade': `${geoData.cidade}, ${geoData.estado} — ${geoData.pais}` } : {}),
+          ...(geoData.cep    ? { 'CEP': geoData.cep } : {}),
           ...(geoData.fuso   ? { 'Fuso horário': geoData.fuso } : {}),
           ...(geoData.ip     ? { 'IP': geoData.ip } : {}),
           ...utmPayload,

@@ -21,4 +21,4 @@
   # connect-src: Web3Forms (formulário) + self (endpoint /geo no Cloudflare)
   # img-src: self + data: (ícones inline do CSS)
   # frame-ancestors: ninguém pode embutir esta página em iframe
-  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.web3forms.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.web3forms.com https://nominatim.openstreetmap.org; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'none'
