@@ -1,0 +1,485 @@
+/* ============================================================
+   AUTO BRASIL PROTEÇÃO VEICULAR — Landing Page Cotação
+   Para alterar cores: edite as variáveis em :root
+   ============================================================ */
+
+:root {
+  /* Cores — edite aqui */
+  --verde-escuro:    #005c2e;
+  --verde-medio:     #007a3d;
+  --verde-claro:     #e8f5ee;
+  --verde-wa:        #25D366;
+  --verde-wa-hover:  #1da851;
+  --laranja:         #ff8a1f;
+  --laranja-hover:   #e87a15;
+  --azul:            #002b6c;
+  --fundo-desktop:   #1e2a3a;
+  --branco:          #ffffff;
+  --cinza-campo:     #f5f7f8;
+  --cinza-borda:     #e0e7ef;
+  --cinza-texto:     #444;
+  --cinza-suave:     #888;
+
+  /* Shape */
+  --radius-card:  20px;
+  --radius-input: 12px;
+  --radius-btn:   12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--verde-escuro);
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 16px 10px 48px;
+}
+
+/* ---- WRAPPER & CARD ---- */
+
+.page-wrapper {
+  width: 100%;
+  max-width: 480px;
+}
+
+.card {
+  background: var(--branco);
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+}
+
+/* ---- HEADER ---- */
+
+.card-header {
+  background: var(--verde-escuro);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  padding: 20px 24px 18px;
+  text-align: center;
+}
+
+.logo { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+
+.logo-principal {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: #fff;
+  letter-spacing: 1.5px;
+}
+
+.logo-sub {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+/* ---- SCREENS ---- */
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+.screen-body { padding: 24px 20px 28px; }
+
+/* ---- TIPOGRAFIA ---- */
+
+.titulo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: var(--azul);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.subtitulo {
+  font-size: 0.875rem;
+  color: var(--cinza-suave);
+  margin-bottom: 22px;
+}
+
+/* ---- CAMPOS ---- */
+
+.campo { margin-bottom: 14px; }
+
+.campo label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--cinza-texto);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.campo input,
+.campo select {
+  display: block;
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border: 1.5px solid var(--cinza-borda);
+  border-radius: var(--radius-input);
+  background: var(--cinza-campo);
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  color: #222;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.campo input:focus,
+.campo select:focus {
+  border-color: var(--verde-medio);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0,92,46,0.09);
+}
+
+.campo select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  background-color: var(--cinza-campo);
+  padding-right: 44px;
+  cursor: pointer;
+}
+
+input[type="date"] { color: #222; cursor: pointer; }
+
+/* ---- RADIOS ESTILIZADOS ---- */
+
+.opcoes-radio { display: flex; gap: 10px; }
+
+.opcao-radio { flex: 1; cursor: pointer; }
+
+.opcao-radio input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.opcao-radio span {
+  display: block;
+  text-align: center;
+  padding: 13px 8px;
+  border: 1.5px solid var(--cinza-borda);
+  border-radius: var(--radius-input);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--cinza-texto);
+  background: var(--cinza-campo);
+  transition: all 0.18s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.opcao-radio input[type="radio"]:checked + span {
+  border-color: var(--verde-escuro);
+  background: var(--verde-claro);
+  color: var(--verde-escuro);
+  font-weight: 600;
+}
+
+/* ---- BOTÕES ---- */
+
+.btn {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.18s, transform 0.1s;
+  line-height: 1.2;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn-laranja { background: var(--laranja); color: #fff; }
+.btn-laranja:hover { background: var(--laranja-hover); }
+
+.btn-verde { background: var(--verde-wa); color: #fff; }
+.btn-verde:hover { background: var(--verde-wa-hover); }
+
+.btn-texto {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--cinza-suave);
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: 'Inter', sans-serif;
+}
+
+.btn-voltar {
+  display: inline-block;
+  background: none;
+  border: none;
+  color: var(--verde-escuro);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 0 18px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ---- ERRO ---- */
+
+.mensagem-erro {
+  background: #fff3f3;
+  border: 1px solid #f5c6c6;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  color: #c0392b;
+  margin-bottom: 14px;
+}
+
+/* ---- TELA 2: RESULTADO ---- */
+
+.resumo-box {
+  background: var(--cinza-campo);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  color: var(--cinza-texto);
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.aviso-legal {
+  font-size: 0.78rem;
+  color: var(--cinza-suave);
+  line-height: 1.55;
+  border-left: 3px solid var(--cinza-borda);
+  padding-left: 10px;
+  margin-bottom: 20px;
+}
+
+.alerta-consulta {
+  background: linear-gradient(135deg, #ff6b00 0%, #ff8a1f 100%);
+  border-radius: 14px;
+  padding: 20px 18px 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 24px rgba(255,107,0,0.35);
+  text-align: center;
+}
+
+.alerta-consulta-icone {
+  font-size: 2.2rem;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.alerta-consulta-titulo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.alerta-consulta-texto {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.92);
+  line-height: 1.5;
+}
+
+/* ---- CARDS DE PLANOS ---- */
+
+.planos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding-top: 8px;
+}
+
+.plano-card {
+  border: 2px solid var(--cinza-borda);
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  position: relative;
+}
+
+.plano-card.destaque {
+  border-color: var(--laranja);
+  margin-top: 10px;
+}
+
+.plano-card.selecionado {
+  border-color: var(--verde-medio);
+  background: var(--verde-claro);
+  box-shadow: 0 2px 14px rgba(0,92,46,0.12);
+}
+
+.plano-card.destaque.selecionado {
+  border-color: var(--laranja);
+  background: #fff8f2;
+  box-shadow: 0 2px 14px rgba(255,138,31,0.15);
+}
+
+.badge-destaque {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--laranja);
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.67rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+.plano-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.plano-nome-text {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--azul);
+}
+
+.plano-valor {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--verde-escuro);
+  white-space: nowrap;
+}
+
+.plano-valor small {
+  font-size: 0.58em;
+  font-weight: 600;
+  color: var(--cinza-suave);
+}
+
+.plano-valor.consulta {
+  font-size: 0.82rem;
+  color: var(--cinza-suave);
+  font-weight: 600;
+}
+
+.plano-beneficios-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.plano-beneficios-lista li {
+  font-size: 0.83rem;
+  color: var(--cinza-texto);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.35;
+}
+
+.plano-beneficios-lista li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--verde-medio);
+  font-weight: 700;
+}
+
+.plano-selecao {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--cinza-borda);
+}
+
+.plano-selecao input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--verde-escuro);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.plano-selecao label {
+  font-size: 0.83rem;
+  color: var(--cinza-texto);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* ---- AÇÕES TELA 2 ---- */
+
+.acoes { display: flex; flex-direction: column; gap: 10px; }
+
+/* ---- BADGE PLANO SELECIONADO (tela 3) ---- */
+
+.plano-escolhido-badge {
+  display: inline-block;
+  background: var(--verde-claro);
+  border: 1px solid #b2d9be;
+  border-radius: 20px;
+  padding: 7px 18px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--verde-escuro);
+  margin-bottom: 22px;
+}
+
+/* ---- LGPD ---- */
+
+.lgpd {
+  font-size: 0.75rem;
+  color: var(--cinza-suave);
+  line-height: 1.55;
+  margin: 16px 0 18px;
+}
+
+/* ============================================================
+   DESKTOP (≥ 640px)
+   ============================================================ */
+@media (min-width: 640px) {
+  body {
+    background: var(--fundo-desktop);
+    align-items: center;
+    padding: 48px 20px 64px;
+  }
+
+  .card { box-shadow: 0 20px 60px rgba(0,0,0,0.38); }
+
+  .screen-body { padding: 28px 28px 32px; }
+
+  .titulo { font-size: 1.5rem; }
+}

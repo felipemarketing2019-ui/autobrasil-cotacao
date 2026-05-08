@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simule sua proteção veicular em menos de 1 minuto. Auto Brasil Proteção Veicular — Nova Iguaçu, RJ.">
+  <title>Simular Cotação | Auto Brasil Proteção Veicular</title>
+
+  <!-- META PIXEL — INSERIR AQUI -->
+  <!-- GTM — INSERIR AQUI -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="page-wrapper">
+    <div class="card">
+
+      <header class="card-header">
+        <div class="logo">
+          <span class="logo-principal">AUTO BRASIL</span>
+          <span class="logo-sub">PROTEÇÃO VEICULAR</span>
+        </div>
+      </header>
+
+      <!-- ========================
+           TELA 1 — Simulação
+           ======================== -->
+      <section id="screen-1" class="screen active">
+        <div class="screen-body">
+          <h1 class="titulo">Simular cotação</h1>
+          <p class="subtitulo">Leva menos de 1 minuto • sem dados pessoais</p>
+
+          <form id="form-simulacao" novalidate>
+
+            <div class="campo">
+              <label for="categoria">Categoria do veículo</label>
+              <select id="categoria" name="categoria" required>
+                <option value="">Selecione...</option>
+                <option value="carro">Carro</option>
+                <option value="moto-250">Moto até 250cc</option>
+                <option value="moto-300">Moto até 300cc</option>
+                <option value="scooter">Scooter</option>
+              </select>
+            </div>
+
+            <div class="campo">
+              <label for="modelo">Marca / Modelo</label>
+              <input type="text" id="modelo" name="modelo"
+                     placeholder="Ex: Honda Biz, Ford Ka, HB20">
+            </div>
+
+            <div class="campo">
+              <label for="ano">Ano</label>
+              <input type="text" id="ano" name="ano"
+                     placeholder="2020" maxlength="4" inputmode="numeric">
+            </div>
+
+            <div class="campo">
+              <label for="cidade">Cidade / Bairro</label>
+              <input type="text" id="cidade" name="cidade"
+                     placeholder="Nova Iguaçu - RJ">
+            </div>
+
+            <div class="campo">
+              <label for="valor">Valor estimado do veículo</label>
+              <input type="text" id="valor" name="valor"
+                     placeholder="R$ 50.000,00" inputmode="numeric">
+            </div>
+
+            <div id="erro-simulacao" class="mensagem-erro" hidden></div>
+
+            <button type="submit" class="btn btn-laranja">CALCULAR SIMULAÇÃO</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ========================
+           TELA 2 — Resultado
+           ======================== -->
+      <section id="screen-2" class="screen">
+        <div class="screen-body">
+          <h2 class="titulo">Sua simulação está pronta</h2>
+          <p class="subtitulo">Escolha o plano ideal para o seu veículo</p>
+
+          <div id="resumo" class="resumo-box"></div>
+
+          <p class="aviso-legal">
+            Esta é apenas uma simulação estimada. A cotação real depende de análise
+            da Auto Brasil, categoria do veículo, plano contratado e regulamento.
+          </p>
+
+          <div id="msg-fora-tabela" class="alerta-consulta" hidden>
+            Para este valor, fale diretamente com nosso consultor para uma cotação personalizada.
+          </div>
+
+          <div id="planos" class="planos-lista"></div>
+
+          <div class="acoes">
+            <button id="btn-whatsapp" class="btn btn-verde">
+              💬 FALAR COM CONSULTOR AGORA
+            </button>
+            <button id="btn-agendar" class="btn btn-laranja">
+              📅 AGENDAR NEGOCIAÇÃO
+            </button>
+            <button id="btn-refazer" class="btn-texto">Refazer simulação</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================
+           TELA 3 — Agendamento
+           ======================== -->
+      <section id="screen-3" class="screen">
+        <div class="screen-body">
+          <button id="btn-voltar" class="btn-voltar">← Voltar</button>
+
+          <h2 class="titulo">Agendar negociação</h2>
+          <p class="subtitulo">Informe seus dados de contato</p>
+
+          <div id="badge-plano" class="plano-escolhido-badge"></div>
+
+          <form id="form-agendamento" novalidate>
+
+            <div class="campo">
+              <label for="nome">Nome completo</label>
+              <input type="text" id="nome" name="nome"
+                     placeholder="Seu nome completo" required autocomplete="name">
+            </div>
+
+            <div class="campo">
+              <label for="telefone">Telefone / WhatsApp</label>
+              <input type="tel" id="telefone" name="telefone"
+                     placeholder="(21) 99999-9999" inputmode="numeric"
+                     required autocomplete="tel">
+            </div>
+
+            <div class="campo">
+              <label>Prefere contato por</label>
+              <div class="opcoes-radio">
+                <label class="opcao-radio">
+                  <input type="radio" name="contato" value="WhatsApp" checked>
+                  <span>WhatsApp</span>
+                </label>
+                <label class="opcao-radio">
+                  <input type="radio" name="contato" value="Ligação">
+                  <span>Ligação</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label for="data-agenda">Melhor data</label>
+              <input type="date" id="data-agenda" name="data" required>
+            </div>
+
+            <div class="campo">
+              <label>Período preferido</label>
+              <div class="opcoes-radio">
+                <label class="opcao-radio">
+                  <input type="radio" name="periodo" value="Manhã" checked>
+                  <span>Manhã</span>
+                </label>
+                <label class="opcao-radio">
+                  <input type="radio" name="periodo" value="Tarde">
+                  <span>Tarde</span>
+                </label>
+                <label class="opcao-radio">
+                  <input type="radio" name="periodo" value="Noite">
+                  <span>Noite</span>
+                </label>
+              </div>
+            </div>
+
+            <p class="lgpd">
+              Seus dados serão usados apenas para contato comercial da Auto Brasil Proteção Veicular.
+            </p>
+
+            <div id="erro-agendamento" class="mensagem-erro" hidden></div>
+
+            <button type="submit" class="btn btn-laranja">CONFIRMAR AGENDAMENTO</button>
+          </form>
+        </div>
+      </section>
+
+    </div><!-- /.card -->
+  </div><!-- /.page-wrapper -->
+
+  <script src="js/script.js"></script>
+</body>
+</html>
