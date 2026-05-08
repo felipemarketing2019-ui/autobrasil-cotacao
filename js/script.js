@@ -7,7 +7,7 @@ const WHATSAPP_NUMBER = '5521966528201';
 
 /* Chave Web3Forms — obter em https://web3forms.com (grátis)
    Informe seu e-mail lá e cole a chave gerada aqui */
-const WEB3FORMS_KEY = 'SUA_CHAVE_AQUI';
+const WEB3FORMS_KEY = '97045284-679d-4e35-b093-6715ec8d86d6';
 
 /* ---- CATEGORIAS ---- */
 const VEHICLE_CATEGORIES = {
