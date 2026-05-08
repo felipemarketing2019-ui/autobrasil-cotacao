@@ -105,16 +105,18 @@ function getUTMs() {
 capturarUTMs();
 
 /* ---- GEOLOCALIZAÇÃO ----
-   1. Pede GPS do navegador (permissão do usuário) — bairro exato
-   2. Fallback: lat/lon do Cloudflare via /geo — cidade apenas
-   3. Nominatim faz geocodificação reversa com o melhor par disponível */
-const geoPromise = (async () => {
-  const cf = await fetch('/geo').then(r => r.json()).catch(() => ({}));
+   /geo é buscado silenciosamente ao carregar (sem permissão).
+   O GPS só é solicitado no momento do envio do formulário. */
+const cfPromise = fetch('/geo').then(r => r.json()).catch(() => ({}));
+
+async function obterGeolocalizacao() {
+  const cf = await cfPromise;
 
   let lat = cf.lat;
   let lon = cf.lon;
   let fonteGeo = 'IP';
 
+  /* Solicita GPS — só chamado no envio do formulário */
   if (navigator.geolocation) {
     try {
       const pos = await new Promise((resolve, reject) =>
@@ -147,7 +149,7 @@ const geoPromise = (async () => {
   }
 
   return { ...cf, bairro, cep, fonteGeo };
-})();
+}
 
 /* ---- ESTADO DA SESSÃO ---- */
 const state = {
@@ -520,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmar.disabled = true;
 
     try {
-      const geoData = await geoPromise;
+      const geoData = await obterGeolocalizacao();
       const utms = getUTMs();
       const utmLabels = {
         utm_source:   'UTM Source',
