@@ -104,19 +104,12 @@ function getUTMs() {
 
 capturarUTMs();
 
-/* ---- GEOLOCALIZAÇÃO POR IP ----
-   Inicia a busca imediatamente ao carregar e guarda a Promise.
-   No envio do formulário aguardamos o resultado com await — garante
-   que os dados chegam mesmo que o usuário submeta rapidamente. */
-const geoPromise = fetch('https://ipapi.co/json/')
+/* ---- GEOLOCALIZAÇÃO ----
+   Lida pelo Cloudflare no endpoint /geo (functions/geo.js).
+   Inicia ao carregar a página e é aguardada no envio do formulário. */
+const geoPromise = fetch('/geo')
   .then(r => r.json())
-  .then(d => ({
-    cidade: d.city          || '',
-    estado: d.region        || '',
-    pais:   d.country_name  || '',
-    ip:     d.ip            || '',
-  }))
-  .catch(() => ({})); // falha silenciosa — retorna objeto vazio
+  .catch(() => ({}));
 
 /* ---- ESTADO DA SESSÃO ---- */
 const state = {
@@ -523,6 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'Valor do veículo': formatCurrencyBR(state.valor),
           'Data e hora do envio': dataHoraEnvio(),
           ...(geoData.cidade ? { 'Localização': `${geoData.cidade}, ${geoData.estado} — ${geoData.pais}` } : {}),
+          ...(geoData.fuso   ? { 'Fuso horário': geoData.fuso } : {}),
           ...(geoData.ip     ? { 'IP': geoData.ip } : {}),
           ...utmPayload,
         }),
