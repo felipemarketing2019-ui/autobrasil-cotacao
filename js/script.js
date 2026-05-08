@@ -84,6 +84,26 @@ const NOMES_CATEGORIA = {
   scooter:    VEHICLE_CATEGORIES.SCOOTER,
 };
 
+/* ---- UTMs — capturados na URL e persistidos em sessionStorage ---- */
+function capturarUTMs() {
+  const params = new URLSearchParams(window.location.search);
+  const chaves = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+  const utms = {};
+  chaves.forEach(k => {
+    const v = params.get(k);
+    if (v) utms[k] = v;
+  });
+  if (Object.keys(utms).length) {
+    sessionStorage.setItem('ab_utms', JSON.stringify(utms));
+  }
+}
+
+function getUTMs() {
+  try { return JSON.parse(sessionStorage.getItem('ab_utms') || '{}'); } catch { return {}; }
+}
+
+capturarUTMs();
+
 /* ---- ESTADO DA SESSÃO ---- */
 const state = {
   categoria: '',
@@ -424,6 +444,19 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmar.disabled = true;
 
     try {
+      const utms = getUTMs();
+      const utmLabels = {
+        utm_source:   'UTM Source',
+        utm_medium:   'UTM Medium',
+        utm_campaign: 'UTM Campaign',
+        utm_term:     'UTM Term',
+        utm_content:  'UTM Content',
+      };
+      const utmPayload = {};
+      Object.entries(utmLabels).forEach(([k, label]) => {
+        if (utms[k]) utmPayload[label] = utms[k];
+      });
+
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -442,6 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
           Ano: state.ano || '—',
           Cidade: state.cidade || '—',
           'Valor do veículo': formatCurrencyBR(state.valor),
+          ...utmPayload,
         }),
       });
 
