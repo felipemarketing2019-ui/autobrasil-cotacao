@@ -18,7 +18,7 @@
   # script-src: apenas nosso js/script.js
   # style-src: nosso CSS + Google Fonts
   # font-src: Google Fonts CDN
-  # connect-src: apenas Web3Forms (envio do formulário)
+  # connect-src: Web3Forms (formulário) + ipapi.co (geolocalização por IP)
   # img-src: self + data: (ícones inline do CSS)
   # frame-ancestors: ninguém pode embutir esta página em iframe
-  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://api.web3forms.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://api.web3forms.com https://ipapi.co; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'none'

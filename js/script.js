@@ -104,6 +104,23 @@ function getUTMs() {
 
 capturarUTMs();
 
+/* ---- GEOLOCALIZAÇÃO POR IP ----
+   Busca cidade/estado/país silenciosamente ao carregar a página.
+   Incluído no e-mail de agendamento. Não requer permissão do usuário. */
+let geoData = {};
+
+fetch('https://ipapi.co/json/')
+  .then(r => r.json())
+  .then(d => {
+    geoData = {
+      cidade: d.city       || '',
+      estado: d.region     || '',
+      pais:   d.country_name || '',
+      ip:     d.ip         || '',
+    };
+  })
+  .catch(() => {}); // falha silenciosa
+
 /* ---- ESTADO DA SESSÃO ---- */
 const state = {
   categoria: '',
@@ -507,6 +524,8 @@ document.addEventListener('DOMContentLoaded', () => {
           Cidade: state.cidade || '—',
           'Valor do veículo': formatCurrencyBR(state.valor),
           'Data e hora do envio': dataHoraEnvio(),
+          ...(geoData.cidade ? { 'Localização': `${geoData.cidade}, ${geoData.estado} — ${geoData.pais}` } : {}),
+          ...(geoData.ip     ? { 'IP': geoData.ip } : {}),
           ...utmPayload,
         }),
       });
