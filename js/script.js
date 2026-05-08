@@ -2,9 +2,12 @@
    AUTO BRASIL PROTEÇÃO VEICULAR — Lógica da Cotação
    ============================================================ */
 
-/* ---- CONFIGURAÇÃO ----
-   Altere o número do WhatsApp aqui (formato: DDI + DDD + número) */
+/* ---- CONFIGURAÇÃO ---- */
 const WHATSAPP_NUMBER = '5521966528201';
+
+/* Chave Web3Forms — obter em https://web3forms.com (grátis)
+   Informe seu e-mail lá e cole a chave gerada aqui */
+const WEB3FORMS_KEY = 'SUA_CHAVE_AQUI';
 
 /* ---- CATEGORIAS ---- */
 const VEHICLE_CATEGORIES = {
@@ -314,6 +317,14 @@ function vincularEventosCards() {
   });
 }
 
+function mostrarSucessoAgendamento(nome) {
+  document.getElementById('form-agendamento').hidden = true;
+  document.getElementById('badge-plano').hidden = true;
+  document.getElementById('sucesso-nome').textContent = nome.split(' ')[0];
+  document.getElementById('sucesso-agendamento').hidden = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function selecionarPlano(id, nome, preco) {
   state.planoSelecionado = { id, nome, preco };
   document.querySelectorAll('.plano-card').forEach(c => c.classList.remove('selecionado'));
@@ -387,8 +398,8 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── TELA 3: Voltar ── */
   document.getElementById('btn-voltar').addEventListener('click', () => irParaTela(2));
 
-  /* ── TELA 3: Confirmar agendamento ── */
-  document.getElementById('form-agendamento').addEventListener('submit', e => {
+  /* ── TELA 3: Confirmar agendamento → envia e-mail via Web3Forms ── */
+  document.getElementById('form-agendamento').addEventListener('submit', async e => {
     e.preventDefault();
     const erro   = validateScheduleForm();
     const erroEl = document.getElementById('erro-agendamento');
@@ -399,19 +410,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     erroEl.hidden = true;
 
-    const plano = state.planoSelecionado
+    const nome     = document.getElementById('nome').value.trim();
+    const telefone = document.getElementById('telefone').value.trim();
+    const contato  = document.querySelector('input[name="contato"]:checked')?.value || 'WhatsApp';
+    const data     = document.getElementById('data-agenda').value;
+    const periodo  = document.querySelector('input[name="periodo"]:checked')?.value || 'Manhã';
+    const plano    = state.planoSelecionado
       ? `${state.planoSelecionado.nome} - ${state.planoSelecionado.preco}`
       : 'A definir';
 
-    const link = buildScheduleWhatsAppLink({
-      nome:     document.getElementById('nome').value.trim(),
-      telefone: document.getElementById('telefone').value.trim(),
-      contato:  document.querySelector('input[name="contato"]:checked')?.value || 'WhatsApp',
-      data:     document.getElementById('data-agenda').value,
-      periodo:  document.querySelector('input[name="periodo"]:checked')?.value || 'Manhã',
-      plano,
-    });
-    window.open(link, '_blank');
+    const btnConfirmar = document.getElementById('btn-confirmar');
+    btnConfirmar.textContent = 'Enviando...';
+    btnConfirmar.disabled = true;
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `Agendamento Auto Brasil — ${nome}`,
+          from_name: 'Auto Brasil Cotação',
+          Nome: nome,
+          Telefone: telefone,
+          'Contato preferido': contato,
+          Data: formatDate(data),
+          Período: periodo,
+          Plano: plano,
+          Categoria: NOMES_CATEGORIA[state.categoria] || state.categoria,
+          Modelo: state.modelo || '—',
+          Ano: state.ano || '—',
+          Cidade: state.cidade || '—',
+          'Valor do veículo': formatCurrencyBR(state.valor),
+        }),
+      });
+
+      const json = await res.json();
+      if (json.success) {
+        mostrarSucessoAgendamento(nome);
+      } else {
+        throw new Error(json.message || 'Erro desconhecido');
+      }
+    } catch {
+      erroEl.textContent = 'Não foi possível enviar. Tente novamente ou fale pelo WhatsApp.';
+      erroEl.hidden = false;
+      btnConfirmar.textContent = 'CONFIRMAR AGENDAMENTO';
+      btnConfirmar.disabled = false;
+    }
+  });
+
+  /* ── TELA 3: Nova simulação após sucesso ── */
+  document.getElementById('btn-nova-simulacao').addEventListener('click', () => {
+    document.getElementById('form-agendamento').hidden = false;
+    document.getElementById('form-agendamento').reset();
+    document.getElementById('badge-plano').hidden = false;
+    document.getElementById('sucesso-agendamento').hidden = true;
+    irParaTela(1);
   });
 
 });

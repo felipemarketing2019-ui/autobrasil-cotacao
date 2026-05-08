@@ -181,8 +181,19 @@
 
             <div id="erro-agendamento" class="mensagem-erro" hidden></div>
 
-            <button type="submit" class="btn btn-laranja">CONFIRMAR AGENDAMENTO</button>
+            <button type="submit" id="btn-confirmar" class="btn btn-laranja">CONFIRMAR AGENDAMENTO</button>
           </form>
+
+          <!-- Tela de sucesso (exibida após envio) -->
+          <div id="sucesso-agendamento" hidden>
+            <div class="sucesso-icone">✅</div>
+            <h3 class="sucesso-titulo">Agendamento recebido!</h3>
+            <p class="sucesso-texto">
+              Obrigado, <strong id="sucesso-nome"></strong>!<br>
+              Nossa equipe vai entrar em contato no horário escolhido.
+            </p>
+            <button id="btn-nova-simulacao" class="btn btn-laranja">Fazer nova simulação</button>
+          </div>
         </div>
       </section>
 

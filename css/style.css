@@ -458,6 +458,34 @@ input[type="date"] { color: #222; cursor: pointer; }
   margin-bottom: 22px;
 }
 
+/* ---- SUCESSO AGENDAMENTO ---- */
+
+#sucesso-agendamento {
+  text-align: center;
+  padding: 12px 0 4px;
+}
+
+.sucesso-icone {
+  font-size: 3rem;
+  margin-bottom: 14px;
+  line-height: 1;
+}
+
+.sucesso-titulo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--verde-escuro);
+  margin-bottom: 12px;
+}
+
+.sucesso-texto {
+  font-size: 0.95rem;
+  color: var(--cinza-texto);
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
 /* ---- LGPD ---- */
 
 .lgpd {
