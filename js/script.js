@@ -178,6 +178,20 @@ function formatDate(dateStr) {
   return `${d}/${m}/${y}`;
 }
 
+/* Remove caracteres HTML perigosos e limita tamanho */
+function sanitizar(str) {
+  return String(str).replace(/[<>"'`\\]/g, '').trim().slice(0, 300);
+}
+
+/* Data e hora do envio formatada em pt-BR */
+function dataHoraEnvio() {
+  return new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'short',
+    timeStyle: 'short',
+    timeZone: 'America/Sao_Paulo',
+  }).format(new Date());
+}
+
 function validateSimulationForm() {
   const categoria = document.getElementById('categoria').value;
   const valor = parseCurrencyBR(document.getElementById('valor').value);
@@ -418,9 +432,25 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── TELA 3: Voltar ── */
   document.getElementById('btn-voltar').addEventListener('click', () => irParaTela(2));
 
+  /* Rate limiting: bloqueia envios com menos de 30s de intervalo */
+  let _ultimoEnvio = 0;
+
   /* ── TELA 3: Confirmar agendamento → envia e-mail via Web3Forms ── */
   document.getElementById('form-agendamento').addEventListener('submit', async e => {
     e.preventDefault();
+
+    /* Honeypot: bot preencheu o campo oculto — ignorar silenciosamente */
+    if (document.getElementById('botcheck').checked) return;
+
+    /* Rate limiting */
+    const agora = Date.now();
+    if (agora - _ultimoEnvio < 30000) {
+      const erroEl = document.getElementById('erro-agendamento');
+      erroEl.textContent = 'Aguarde alguns segundos antes de tentar novamente.';
+      erroEl.hidden = false;
+      return;
+    }
+
     const erro   = validateScheduleForm();
     const erroEl = document.getElementById('erro-agendamento');
     if (erro) {
@@ -430,8 +460,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     erroEl.hidden = true;
 
-    const nome     = document.getElementById('nome').value.trim();
-    const telefone = document.getElementById('telefone').value.trim();
+    /* Sanitização: remove caracteres perigosos antes de enviar */
+    const nome     = sanitizar(document.getElementById('nome').value);
+    const telefone = sanitizar(document.getElementById('telefone').value);
     const contato  = document.querySelector('input[name="contato"]:checked')?.value || 'WhatsApp';
     const data     = document.getElementById('data-agenda').value;
     const periodo  = document.querySelector('input[name="periodo"]:checked')?.value || 'Manhã';
@@ -475,12 +506,14 @@ document.addEventListener('DOMContentLoaded', () => {
           Ano: state.ano || '—',
           Cidade: state.cidade || '—',
           'Valor do veículo': formatCurrencyBR(state.valor),
+          'Data e hora do envio': dataHoraEnvio(),
           ...utmPayload,
         }),
       });
 
       const json = await res.json();
       if (json.success) {
+        _ultimoEnvio = Date.now();
         mostrarSucessoAgendamento(nome);
       } else {
         throw new Error(json.message || 'Erro desconhecido');

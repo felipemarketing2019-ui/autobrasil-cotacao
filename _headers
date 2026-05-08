@@ -1,0 +1,24 @@
+/*
+  # Bloqueia carregamento em iframes (clickjacking)
+  X-Frame-Options: DENY
+
+  # Impede navegador de adivinhar o tipo de conteúdo
+  X-Content-Type-Options: nosniff
+
+  # Envia apenas a origem no Referer, sem path completo
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Força HTTPS por 1 ano
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+  # Desativa câmera, microfone, geolocalização e pagamento
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+
+  # Content Security Policy — define exatamente o que pode carregar
+  # script-src: apenas nosso js/script.js
+  # style-src: nosso CSS + Google Fonts
+  # font-src: Google Fonts CDN
+  # connect-src: apenas Web3Forms (envio do formulário)
+  # img-src: self + data: (ícones inline do CSS)
+  # frame-ancestors: ninguém pode embutir esta página em iframe
+  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://api.web3forms.com; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'none'

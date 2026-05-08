@@ -179,6 +179,10 @@
               Seus dados serão usados apenas para contato comercial da Auto Brasil Proteção Veicular.
             </p>
 
+            <!-- Honeypot: invisível para humanos, bots preenchem e são bloqueados -->
+            <input type="checkbox" name="botcheck" id="botcheck"
+                   style="display:none" tabindex="-1" autocomplete="off">
+
             <div id="erro-agendamento" class="mensagem-erro" hidden></div>
 
             <button type="submit" id="btn-confirmar" class="btn btn-laranja">CONFIRMAR AGENDAMENTO</button>
