@@ -105,21 +105,18 @@ function getUTMs() {
 capturarUTMs();
 
 /* ---- GEOLOCALIZAÇÃO POR IP ----
-   Busca cidade/estado/país silenciosamente ao carregar a página.
-   Incluído no e-mail de agendamento. Não requer permissão do usuário. */
-let geoData = {};
-
-fetch('https://ipapi.co/json/')
+   Inicia a busca imediatamente ao carregar e guarda a Promise.
+   No envio do formulário aguardamos o resultado com await — garante
+   que os dados chegam mesmo que o usuário submeta rapidamente. */
+const geoPromise = fetch('https://ipapi.co/json/')
   .then(r => r.json())
-  .then(d => {
-    geoData = {
-      cidade: d.city       || '',
-      estado: d.region     || '',
-      pais:   d.country_name || '',
-      ip:     d.ip         || '',
-    };
-  })
-  .catch(() => {}); // falha silenciosa
+  .then(d => ({
+    cidade: d.city          || '',
+    estado: d.region        || '',
+    pais:   d.country_name  || '',
+    ip:     d.ip            || '',
+  }))
+  .catch(() => ({})); // falha silenciosa — retorna objeto vazio
 
 /* ---- ESTADO DA SESSÃO ---- */
 const state = {
@@ -492,6 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmar.disabled = true;
 
     try {
+      const geoData = await geoPromise;
       const utms = getUTMs();
       const utmLabels = {
         utm_source:   'UTM Source',
