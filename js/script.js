@@ -345,7 +345,7 @@ function renderResultado() {
     alertaEl.hidden = false;
     alertaEl.innerHTML = `
       <div class="alerta-consulta-icone">🚨</div>
-      <div class="alerta-consulta-titulo">Veículo acima da faixa padrão!</div>
+      <div class="alerta-consulta-titulo">Categoria Especial!</div>
       <div class="alerta-consulta-texto">
         Para veículos acima de <strong>R$ 100.000</strong>, nossa equipe faz uma cotação
         personalizada. Fale agora com um consultor — é rápido e sem compromisso.
