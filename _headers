@@ -15,10 +15,4 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
 
   # Content Security Policy — define exatamente o que pode carregar
-  # script-src: apenas nosso js/script.js
-  # style-src: nosso CSS + Google Fonts
-  # font-src: Google Fonts CDN
-  # connect-src: Web3Forms (formulário) + self (endpoint /geo no Cloudflare)
-  # img-src: self + data: (ícones inline do CSS)
-  # frame-ancestors: ninguém pode embutir esta página em iframe
-  Content-Security-Policy: default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.web3forms.com https://nominatim.openstreetmap.org; img-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'none'
+  Content-Security-Policy: default-src 'none'; script-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://api.web3forms.com https://nominatim.openstreetmap.org https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://region1.google-analytics.com; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com https://ssl.google-analytics.com; frame-src https://www.googletagmanager.com; frame-ancestors 'none'; base-uri 'self'; form-action 'none'
