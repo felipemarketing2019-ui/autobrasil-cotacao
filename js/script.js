@@ -62,6 +62,7 @@ const TABELA_PRECOS = {
     { min: 50001,  max: 60000,  ouro: 280.00, prata: 255.00 },
     { min: 60001,  max: 70000,  ouro: 380.00, prata: 349.00 },
     { min: 70001,  max: 80000,  ouro: 480.00, prata: 395.00 },
+    { min: 80001,  max: 100000, exclusivo: 550.00 },
   ],
   'moto-250': [
     { min: 0.01,  max: 10000,  ouro: 159.00, prata: 139.00 },
@@ -194,6 +195,10 @@ function getQuote(categoria, valor) {
     return { isFixedPrice: false, isOutOfRange: true, ouro: null, prata: null };
   }
 
+  if (faixa.exclusivo !== undefined) {
+    return { isFixedPrice: false, isOutOfRange: false, isExclusivo: true, exclusivo: faixa.exclusivo };
+  }
+
   return { isFixedPrice: false, isOutOfRange: false, ouro: faixa.ouro, prata: faixa.prata };
 }
 
@@ -321,6 +326,20 @@ function renderResultado() {
     return;
   }
 
+  /* ── PLANO EXCLUSIVO: faixa de R$ 80.001 a R$ 100.000 ── */
+  if (quote && quote.isExclusivo) {
+    alertaEl.hidden = true;
+    listaEl.innerHTML = criarCardHTML('exclusivo', 'Plano Exclusivo', quote.exclusivo, [
+      'Cobertura completa',
+      'Carro reserva',
+      'Vidros, retrovisores e faróis',
+      'Assistência premium 24h',
+    ], true);
+    vincularEventosCards();
+    selecionarPlano('exclusivo', 'Plano Exclusivo', formatCurrencyBR(quote.exclusivo));
+    return;
+  }
+
   /* ── FORA DE TABELA: valor acima do limite ── */
   if (!quote || quote.isOutOfRange) {
     alertaEl.hidden = false;
@@ -328,7 +347,7 @@ function renderResultado() {
       <div class="alerta-consulta-icone">🚨</div>
       <div class="alerta-consulta-titulo">Veículo acima da faixa padrão!</div>
       <div class="alerta-consulta-texto">
-        Para veículos acima de <strong>R$ 80.000</strong>, nossa equipe faz uma cotação
+        Para veículos acima de <strong>R$ 100.000</strong>, nossa equipe faz uma cotação
         personalizada. Fale agora com um consultor — é rápido e sem compromisso.
       </div>
     `;
