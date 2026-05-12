@@ -276,6 +276,8 @@ function irParaTela(n) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(`screen-${n}`).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (n === 2) trackEvent('visualizou_resultado_cotacao');
+  if (n === 3) trackEvent('visualizou_agendamento');
 }
 
 /* ============================================================
