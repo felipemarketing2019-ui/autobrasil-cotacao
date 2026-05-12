@@ -5,6 +5,12 @@
 /* ---- CONFIGURAÇÃO ---- */
 const WHATSAPP_NUMBER = '5521966528201';
 
+/* ---- RASTREAMENTO GTM ---- */
+function trackEvent(eventName, params = {}) {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: eventName, ...params });
+}
+
 /* Chave Web3Forms — obter em https://web3forms.com (grátis)
    Informe seu e-mail lá e cole a chave gerada aqui */
 const WEB3FORMS_KEY = '97045284-679d-4e35-b093-6715ec8d86d6';
@@ -472,6 +478,11 @@ document.addEventListener('DOMContentLoaded', () => {
     state.valor     = parseCurrencyBR(document.getElementById('valor').value);
     state.quote     = getQuote(state.categoria, state.valor);
 
+    trackEvent('simulacao_calculada', {
+      categoria: state.categoria,
+      valor_veiculo: state.valor,
+      cidade: state.cidade,
+    });
     renderResultado();
     irParaTela(2);
   });
@@ -479,13 +490,23 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── TELA 2: WhatsApp ── */
   document.getElementById('btn-whatsapp').addEventListener('click', () => {
     const plano = state.planoSelecionado || { nome: 'A definir', preco: '' };
-    const link  = buildWhatsAppLink({ ...state, plano: plano.nome, precoPlano: plano.preco });
+    trackEvent('clique_whatsapp', {
+      plano: plano.nome,
+      categoria: state.categoria,
+      valor_veiculo: state.valor,
+    });
+    const link = buildWhatsAppLink({ ...state, plano: plano.nome, precoPlano: plano.preco });
     window.open(link, '_blank');
   });
 
   /* ── TELA 2: Agendar ── */
   document.getElementById('btn-agendar').addEventListener('click', () => {
     const plano = state.planoSelecionado;
+    trackEvent('clique_agendar', {
+      plano: plano ? plano.nome : 'A definir',
+      categoria: state.categoria,
+      valor_veiculo: state.valor,
+    });
     document.getElementById('badge-plano').textContent = plano
       ? `Plano selecionado: ${plano.nome} — ${plano.preco}`
       : 'Plano: a definir com consultor';
@@ -587,6 +608,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const json = await res.json();
       if (json.success) {
         _ultimoEnvio = Date.now();
+        trackEvent('agendamento_confirmado', {
+          plano: state.planoSelecionado ? state.planoSelecionado.nome : 'A definir',
+          categoria: state.categoria,
+          valor_veiculo: state.valor,
+        });
         mostrarSucessoAgendamento(nome);
       } else {
         throw new Error(json.message || 'Erro desconhecido');
