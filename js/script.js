@@ -350,12 +350,16 @@ function renderResultado() {
 
   /* ── FORA DE TABELA: valor acima do limite ── */
   if (!quote || quote.isOutOfRange) {
+    const faixas = TABELA_PRECOS[categoria];
+    const limiteMax = faixas
+      ? formatCurrencyBR(Math.max(...faixas.map(f => f.max)))
+      : 'R$ 100.000';
     alertaEl.hidden = false;
     alertaEl.innerHTML = `
       <div class="alerta-consulta-icone">🚨</div>
-      <div class="alerta-consulta-titulo">Categoria Especial!</div>
+      <div class="alerta-consulta-titulo">Valor acima da tabela!</div>
       <div class="alerta-consulta-texto">
-        Para veículos acima de <strong>R$ 100.000</strong>, nossa equipe faz uma cotação
+        Para veículos acima de <strong>${limiteMax}</strong>, nossa equipe faz uma cotação
         personalizada. Fale agora com um consultor — é rápido e sem compromisso.
       </div>
     `;
@@ -375,13 +379,13 @@ function renderResultado() {
       'Roubo e furto',
       'Colisão parcial',
       'Assistência 24h',
-    ], false),
+    ], false, true),
     criarCardHTML('ouro', 'Plano Ouro', quote.ouro, [
       'Cobertura completa',
       'Carro reserva',
       'Vidros, retrovisores e faróis',
       'Assistência premium 24h',
-    ], true),
+    ], true, true),
     criarCardHTML('bronze', 'Plano Bronze', PRECO_BRONZE, [
       'App de monitoramento',
       'Assistência 24 horas',
@@ -389,18 +393,28 @@ function renderResultado() {
   ].join('');
 
   vincularEventosCards();
-  selecionarPlano('ouro', 'Plano Ouro', formatCurrencyBR(quote.ouro));
+  const faixaOuro = `${formatCurrencyBR(Math.round(quote.ouro * 0.8))} - ${formatCurrencyBR(quote.ouro)}`;
+  selecionarPlano('ouro', 'Plano Ouro', faixaOuro);
 }
 
-function criarCardHTML(id, nome, preco, beneficios, destaque) {
-  const precoFmt = preco !== null ? formatCurrencyBR(preco) : null;
-  const valorHTML = precoFmt
-    ? `<span class="plano-valor">${precoFmt}<small>/mês</small></span>`
-    : `<span class="plano-valor consulta">Sob consulta</span>`;
+function criarCardHTML(id, nome, preco, beneficios, destaque, showRange = false) {
+  let valorHTML, precoStr;
+
+  if (preco === null) {
+    valorHTML = `<span class="plano-valor consulta">Sob consulta</span>`;
+    precoStr  = 'Sob consulta';
+  } else if (showRange) {
+    const precoMin = Math.round(preco * 0.8);
+    precoStr  = `${formatCurrencyBR(precoMin)} - ${formatCurrencyBR(preco)}`;
+    valorHTML = `<span class="plano-valor">${precoStr}<small>/mês</small></span>`;
+  } else {
+    precoStr  = formatCurrencyBR(preco);
+    valorHTML = `<span class="plano-valor">${precoStr}<small>/mês</small></span>`;
+  }
 
   return `
     <div class="plano-card${destaque ? ' destaque' : ''}"
-         data-id="${id}" data-nome="${nome}" data-preco="${precoFmt || 'Sob consulta'}">
+         data-id="${id}" data-nome="${nome}" data-preco="${precoStr}">
       ${destaque ? '<span class="badge-destaque">⭐ MAIS ESCOLHIDO</span>' : ''}
       <div class="plano-cabecalho">
         <span class="plano-nome-text">${nome}</span>
@@ -455,9 +469,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const valorEl = document.getElementById('valor');
   valorEl.addEventListener('input', () => maskCurrencyBR(valorEl));
 
-  const anoEl = document.getElementById('ano');
-  anoEl.addEventListener('input', () => maskAno(anoEl));
-
   const telEl = document.getElementById('telefone');
   telEl.addEventListener('input', () => maskTelefone(telEl));
 
@@ -474,9 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
     erroEl.hidden = true;
 
     state.categoria = document.getElementById('categoria').value;
-    state.modelo    = document.getElementById('modelo').value.trim();
-    state.ano       = document.getElementById('ano').value.trim();
-    state.cidade    = document.getElementById('cidade').value.trim();
     state.valor     = parseCurrencyBR(document.getElementById('valor').value);
     state.quote     = getQuote(state.categoria, state.valor);
 
